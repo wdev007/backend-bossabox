@@ -1,3 +1,5 @@
 import app from "./app";
 
-app.listen(3333);
+const port = 3000;
+
+app.listen(process.env.PORT || port);
