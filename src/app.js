@@ -1,7 +1,7 @@
 import express from "express";
 // eslint-disable-next-line no-unused-vars
 import database from "./config/database";
-
+import "dotenv/config";
 import routes from "./routes";
 
 class App {
@@ -18,8 +18,6 @@ class App {
   routes() {
     this.server.use(routes);
   }
-
-  database() {}
 }
 
 export default new App().server;
