@@ -2,7 +2,7 @@ import User from "../models/User";
 
 class SessionController {
   async show(req, res) {
-    res.send(req.user);
+    res.status(200).send(req.user);
   }
 
   async store(req, res) {
@@ -12,14 +12,14 @@ class SessionController {
       const user = await User.findByCredentials(email, password);
 
       if (user.error) {
-        return res.status(401).json({ error: user.error });
+        throw new Error(user.error);
       }
 
       const token = await user.generateAuthToken();
 
-      return res.json({ user, token });
+      return res.status(201).json({ user, token });
     } catch (error) {
-      return res.status(400).json({ error: "Invalid credentials" });
+      return res.status(401).json({ message: error.message });
     }
   }
 
