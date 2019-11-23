@@ -50,9 +50,11 @@ UserSchema.pre("save", async function(next) {
 UserSchema.methods.generateAuthToken = async function() {
   const user = this; // save context of user
 
-  const token = jwt.sign({ _id: user._id }, process.env.JWT_KEY);
+  const token = jwt.sign({ _id: user._id }, process.env.JWT_KEY, {
+    expiresIn: "1d"
+  });
 
-  user.tokens = user.tokens.concat({ token });
+  user.tokens = user.tokens.concat({ token }); // User have various sessions
   await user.save();
 
   return token;
