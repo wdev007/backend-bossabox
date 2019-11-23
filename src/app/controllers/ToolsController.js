@@ -16,7 +16,7 @@ class ToolController {
       return res.json({ message: "Tool not exist" });
     }
 
-    return res.json(tools);
+    return res.status(201).json(tools);
   }
 
   async store(req, res) {
@@ -52,7 +52,7 @@ class ToolController {
     const tool = await Tool.findByIdAndDelete(id);
 
     if (!tool) {
-      return res.json({ message: "Tool does not exist" });
+      return res.status(404).json({ message: "Tool does not exist" });
     }
     return res.status(204).json({ message: "No Content" });
   }
