@@ -45,7 +45,7 @@ describe("Session", () => {
       .send({ email, password })
       .expect(201);
 
-    token = user.body.token;
+    // token = user.body.token;
   });
 });
 
