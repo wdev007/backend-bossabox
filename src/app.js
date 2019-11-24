@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 // eslint-disable-next-line no-unused-vars
 import database from "./config/database";
 import "dotenv/config";
@@ -13,6 +14,7 @@ class App {
 
   middlewares() {
     this.server.use(express.json());
+    this.server.use(cors());
   }
 
   routes() {
