@@ -1,60 +1,77 @@
+/* eslint-disable consistent-return */
 import Tool from "../models/Tool";
 
 class ToolController {
   async index(req, res) {
-    const { tag } = req.query;
+    try {
+      const { tag } = req.query;
 
-    if (!tag) {
-      const tools = await Tool.find({});
+      if (!tag) {
+        const tools = await Tool.find({});
 
-      return res.json(tools);
+        return res.json(tools);
+      }
+
+      const tools = await Tool.find({ tags: tag });
+
+      if (!tools.length) {
+        return res.json({ message: "Tool not exist" });
+      }
+
+      return res.status(201).json(tools);
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
     }
-
-    const tools = await Tool.find({ tags: tag });
-
-    if (!tools.length) {
-      return res.json({ message: "Tool not exist" });
-    }
-
-    return res.status(201).json(tools);
   }
 
   async store(req, res) {
-    const { title, description, link, tags } = req.body;
+    try {
+      const { title, description, link, tags } = req.body;
 
-    await Tool.create({
-      title,
-      description,
-      link,
-      tags
-    });
+      await Tool.create({
+        title,
+        description,
+        link,
+        tags
+      });
 
-    return res.status(201).json({ message: "Created" });
+      return res.status(201).json({ message: "Created" });
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
+    }
   }
 
   async update(req, res) {
-    const { id } = req.params;
+    try {
+      const { id } = req.params;
 
-    const tool = await Tool.findByIdAndUpdate(id, req.body, {
-      useFindAndModify: false
-    });
+      const tool = await Tool.findByIdAndUpdate(id, req.body, {
+        useFindAndModify: false
+      });
 
-    if (!tool) {
-      return res.status(404).json({ message: "Tool not exist" });
+      if (!tool) {
+        return res.status(404).json({ message: "Tool not exist" });
+      }
+
+      return res.json(tool);
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
     }
-
-    return res.json(tool);
   }
 
   async delete(req, res) {
-    const { id } = req.params;
+    try {
+      const { id } = req.params;
 
-    const tool = await Tool.findByIdAndDelete(id);
+      const tool = await Tool.findByIdAndDelete(id);
 
-    if (!tool) {
-      return res.status(404).json({ message: "Tool does not exist" });
+      if (!tool) {
+        return res.status(404).json({ message: "Tool does not exist" });
+      }
+      return res.status(204).json({ message: "No Content" });
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
     }
-    return res.status(204).json({ message: "No Content" });
   }
 }
 

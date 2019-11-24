@@ -2,7 +2,11 @@ import User from "../models/User";
 
 class SessionController {
   async show(req, res) {
-    res.status(200).send(req.user);
+    try {
+      return res.status(200).send(req.user);
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
+    }
   }
 
   async store(req, res) {
