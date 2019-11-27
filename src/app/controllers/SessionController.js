@@ -46,7 +46,7 @@ class SessionController {
     try {
       req.user.tokens.splice(0, req.user.tokens.length);
       await req.user.save();
-      res.send();
+      res.status(203).send();
     } catch (error) {
       res.status(500).send(error);
     }

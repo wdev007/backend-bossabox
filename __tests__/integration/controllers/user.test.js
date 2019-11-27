@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 import request from "supertest";
@@ -13,6 +14,7 @@ const correctUserData = {
 };
 
 let token = "";
+let id;
 
 describe("User", () => {
   it("Shoud create new user", async () => {
@@ -21,7 +23,7 @@ describe("User", () => {
       .send(correctUserData)
       .expect(201);
     token = user.body.token;
-    // console.log(token);
+    id = user.body.user._id;
   });
 
   it("Should return error for invalide datas for user", async () => {
@@ -34,6 +36,54 @@ describe("User", () => {
       .post("/users")
       .send(data)
       .expect(400);
+  });
+
+  it("Should creaated a new user and delete this user", async () => {
+    const user = await request(app)
+      .post("/users")
+      .send({
+        username: faker.internet.userName(),
+        email: faker.internet.email(),
+        password: faker.internet.password(8)
+      })
+      .expect(201);
+    const { _id } = user.body.user;
+
+    await request(app)
+      .delete(`/users/${_id}`)
+      .expect(205);
+  });
+
+  it("Should return all users", async () => {
+    await request(app)
+      .get(`/users`)
+      .expect(200);
+  });
+
+  it("Should return user by id", async () => {
+    await request(app)
+      .get(`/users/${id}`)
+      .expect(200);
+  });
+
+  it("Should update user by id", async () => {
+    await request(app)
+      .put(`/users/${id}`)
+      .send({ username: faker.internet.userName() })
+      .expect(205);
+  });
+
+  it("Should return a error 404 in update, user not found", async () => {
+    await request(app)
+      .put(`/users/${Types.ObjectId()}`)
+      .send({ username: faker.internet.userName() })
+      .expect(404);
+  });
+
+  it("Should return a error 404 in get, user not found", async () => {
+    await request(app)
+      .get(`/users/${Types.ObjectId()}`)
+      .expect(404);
   });
 });
 

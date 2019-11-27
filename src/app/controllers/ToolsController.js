@@ -18,7 +18,7 @@ class ToolController {
         return res.json({ message: "Tool not exist" });
       }
 
-      return res.status(201).json(tools);
+      return res.status(200).json(tools);
     } catch (error) {
       return res.status(400).json({ message: error.message });
     }
@@ -28,14 +28,14 @@ class ToolController {
     try {
       const { title, description, link, tags } = req.body;
 
-      await Tool.create({
+      const tool = await Tool.create({
         title,
         description,
         link,
         tags
       });
 
-      return res.status(201).json({ message: "Created" });
+      return res.status(201).json({ message: "Created", tool });
     } catch (error) {
       return res.status(400).json({ message: error.message });
     }
@@ -68,7 +68,7 @@ class ToolController {
       if (!tool) {
         return res.status(404).json({ message: "Tool does not exist" });
       }
-      return res.status(204).json({ message: "No Content" });
+      return res.status(204).json({ message: "No Content", toolId: id });
     } catch (error) {
       return res.status(400).json({ message: error.message });
     }

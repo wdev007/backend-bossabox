@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-undef */
 import request from "supertest";
 import mongoose from "mongoose";
@@ -5,20 +6,22 @@ import faker from "faker";
 import app from "../../../src/app";
 import Tool from "../../../src/app/models/Tool";
 
+const dataTool = {
+  title: faker.name.title(),
+  description: faker.name.jobDescriptor(),
+  tags: faker.random.words(Math.floor(Math.random() * (6 - 1) + 1)).split(" "),
+  link: faker.internet.url()
+};
+
+let idTool;
+
 describe("Tools", () => {
   it("Should create a tool", async () => {
-    const data = {
-      title: faker.name.title(),
-      description: faker.name.jobDescriptor(),
-      tags: faker.random
-        .words(Math.floor(Math.random() * (6 - 1) + 1))
-        .split(" "),
-      link: faker.internet.url()
-    };
     const tool = await request(app)
       .post("/tools")
-      .send(data)
+      .send(dataTool)
       .expect(201);
+    idTool = tool.body.tool._id;
 
     expect(tool.body.message).toBe("Created");
   });
@@ -47,10 +50,23 @@ describe("Tools", () => {
       .expect(204);
   });
 
+  it("Should update tool", async () => {
+    await request(app)
+      .put(`/tools/${idTool}`)
+      .send({ description: faker.name.jobDescriptor() })
+      .expect(200);
+  });
+
   it("Should return status 404 when id tool not exist", async () => {
     const id = mongoose.Types.ObjectId();
     await request(app)
       .delete(`/tools/${id}`)
       .expect(404);
+  });
+
+  it("Should return tools by tags", async () => {
+    await request(app)
+      .get(`/tools?tag=${dataTool.tags[0]}`)
+      .expect(200);
   });
 });
